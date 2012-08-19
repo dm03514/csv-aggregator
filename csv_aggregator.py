@@ -20,9 +20,11 @@ class CSVAggregator(object):
         config.read(config_path)
         self.rules = self._parse_config_options(config) 
         self.output_columns_list = config.options('output_columns')
-        # initialize output file
-        self.output_f = open('output.csv', 'wb')
-
+        # initialize output file as a dict writer
+        f = open('output.csv', 'wb')
+        self.dict_writer = csv.DictWriter(f, self.output_columns_list)
+        # write output columns
+        self.dict_writer.writeheader()
 
     def aggregate_csv(self, csv_path):
         """
@@ -32,10 +34,37 @@ class CSVAggregator(object):
         """
         # open this csv
         with open(csv_path) as f:
-            # run through csv reader
-            dict_reader = csv.DictReader(f.read())
+            # run through csv DictReader to get field names
+            dict_reader = csv.DictReader(f)
+            # for every row check if it is in the output columns or if it
+            # is in one of the mappings (case sensitive)
+            for line_dict in dict_reader:
+                new_row_dict = {}
+                # apply rules
+                line_dict = self._apply_rules(self.rules, line_dict)  
 
+                # go through output columns and compose a row to write
+                for column_name in self.output_columns_list:
+                    try:
+                        new_row_dict[column_name] = line_dict[column_name]
+                    except KeyError:
+                        pass
 
+                self.dict_writer.writerow(new_row_dict)
+
+    def _apply_rules(self, rules, line_dict):
+        """
+        Apply all rules to a line dict.  This consists of converting any
+        columns specificed in rules to the output column
+        @return dict the modified dict with rules applied.
+        """
+        for from_name, to_name in rules.items():
+            if from_name in line_dict:
+                # rename this key
+                line_dict[to_name] = line_dict[from_name]
+                del line_dict[from_name]
+
+        return line_dict            
 
     def _parse_config_options(self, config, section='rules'):
         """
@@ -49,9 +78,7 @@ class CSVAggregator(object):
         return output 
 
 
-
 if __name__ == '__main__':
-    import ipdb; ipdb.set_trace()
     if len(sys.argv) != 2 or not os.path.exists(sys.argv[1]):
         raise Exception('Please include a valid path')
     aggregator = CSVAggregator()
