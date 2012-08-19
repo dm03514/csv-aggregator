@@ -17,6 +17,7 @@ class CSVAggregator(object):
         """
         # make sure to get config options
         config = ConfigParser.ConfigParser()
+        config.optionxform = str
         config.read(config_path)
         self.rules = self._parse_config_options(config) 
         self.output_columns_list = config.options('output_columns')
@@ -34,6 +35,7 @@ class CSVAggregator(object):
         """
         # open this csv
         with open(csv_path) as f:
+            #import ipdb; ipdb.set_trace()
             # run through csv DictReader to get field names
             dict_reader = csv.DictReader(f)
             # for every row check if it is in the output columns or if it
