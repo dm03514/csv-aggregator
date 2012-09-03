@@ -1,3 +1,4 @@
+import argparse
 import ConfigParser
 import csv
 from datetime import datetime
@@ -8,8 +9,7 @@ import sys
 
 class CSVAggregator(object):
 
-    def __init__(self, 
-                 config_path=os.path.join(os.path.abspath(os.path.dirname(__file__)), 'columns.cfg')):
+    def __init__(self, config_path):
         """
         Initialize new CSV aggregator. config_path is the full
         path to the config file, it defaults to the main project
@@ -26,7 +26,6 @@ class CSVAggregator(object):
         self.output_columns_list.append('originating_csv_name')
         # initialize output file as a dict writer
         output_file_name = datetime.now().strftime('output_%Y_%m_%d_%H_%M_%S.csv')
-        #import ipdb; ipdb.set_trace()
         f = open(output_file_name, 'wb')
         self.dict_writer = csv.DictWriter(f, self.output_columns_list)
         # write output columns
@@ -91,10 +90,24 @@ class CSVAggregator(object):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) != 2 or not os.path.exists(sys.argv[1]):
+    parser = argparse.ArgumentParser(description='Aggregate CSV files based on config file')
+    parser.add_argument('csv_path', metavar='csv_path', type=str,
+                       help='path where csvs to aggregate are located')
+    parser.add_argument('-c', '--config', help='path to config file', dest='config_path')
+    args = parser.parse_args()
+
+    import ipdb; ipdb.set_trace()
+    if not os.path.exists(args.csv_path):
         raise Exception('Please include a valid path')
-    aggregator = CSVAggregator()
-    for csv_path in glob.glob('{0}/*.csv'.format(sys.argv[1])):
+
+    # if a config file was specified pass it in else use the directory this file is in
+    if args.config_path is None:
+        config_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'columns.cfg')
+    else:
+        config_path = args.config_path
+
+    aggregator = CSVAggregator(config_path)
+    for csv_path in glob.glob('{0}/*.csv'.format(args.csv_path)):
         # make sure that this isn't the output csv.
         # where should the output csv be? I'd like to put it
         # in memory but these csvs can be HUGGGGE
