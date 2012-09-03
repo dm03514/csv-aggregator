@@ -22,6 +22,8 @@ class CSVAggregator(object):
         config.read(config_path)
         self.rules = self._parse_config_options(config) 
         self.output_columns_list = config.options('output_columns')
+        # make sure to add the originating csv name
+        self.output_columns_list.append('originating_csv_name')
         # initialize output file as a dict writer
         output_file_name = datetime.now().strftime('output_%Y_%m_%d_%H_%M_%S.csv')
         #import ipdb; ipdb.set_trace()
@@ -36,6 +38,9 @@ class CSVAggregator(object):
         Use DictReader to get field names
         @return void writes to output file
         """
+        # get filename from this path
+        filename = os.path.basename(csv_path)
+
         # open this csv
         with open(csv_path) as f:
             # run through csv DictReader to get field names
@@ -53,6 +58,9 @@ class CSVAggregator(object):
                         new_row_dict[column_name] = line_dict[column_name]
                     except KeyError:
                         pass
+
+                # always add the orginating file name
+                new_row_dict['originating_csv_name'] = filename
 
                 self.dict_writer.writerow(new_row_dict)
 
@@ -90,6 +98,6 @@ if __name__ == '__main__':
         # make sure that this isn't the output csv.
         # where should the output csv be? I'd like to put it
         # in memory but these csvs can be HUGGGGE
-        if 'output.csv' in csv_path:
+        if 'output' in csv_path:
             continue
-        csvs_list = aggregator.aggregate_csv(csv_path)
+        aggregator.aggregate_csv(csv_path)
