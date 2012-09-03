@@ -1,5 +1,6 @@
 import ConfigParser
 import csv
+from datetime import datetime
 import glob
 import os
 import sys
@@ -22,7 +23,9 @@ class CSVAggregator(object):
         self.rules = self._parse_config_options(config) 
         self.output_columns_list = config.options('output_columns')
         # initialize output file as a dict writer
-        f = open('output.csv', 'wb')
+        output_file_name = datetime.now().strftime('output_%Y_%m_%d_%H_%M_%S.csv')
+        #import ipdb; ipdb.set_trace()
+        f = open(output_file_name, 'wb')
         self.dict_writer = csv.DictWriter(f, self.output_columns_list)
         # write output columns
         self.dict_writer.writeheader()
@@ -35,7 +38,6 @@ class CSVAggregator(object):
         """
         # open this csv
         with open(csv_path) as f:
-            #import ipdb; ipdb.set_trace()
             # run through csv DictReader to get field names
             dict_reader = csv.DictReader(f)
             # for every row check if it is in the output columns or if it
