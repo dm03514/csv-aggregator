@@ -20,16 +20,16 @@ The [rules] section contains mappings of column names,  THese are applied to eac
 The above command will read from the columns.cfg file and create an output.csv file in the current directory!
 
 
-`usage: csv_aggregator.py [-h] [-c CONFIG_PATH] [-o OUTPUT_PATH] csv_path
+    usage: csv_aggregator.py [-h] [-c CONFIG_PATH] [-o OUTPUT_PATH] csv_path
 
-Aggregate CSV files based on config file
+    Aggregate CSV files based on config file
 
-positional arguments:
-  csv_path              path where csvs to aggregate are located
+    positional arguments:
+      csv_path              path where csvs to aggregate are located
 
-optional arguments:
-  -h, --help            show this help message and exit
-  -c CONFIG_PATH, --config CONFIG_PATH
-                        path to config file
-  -o OUTPUT_PATH, --output OUTPUT_PATH
-                        full path of output file`
+    optional arguments:
+      -h, --help            show this help message and exit
+      -c CONFIG_PATH, --config CONFIG_PATH
+                            path to config file
+      -o OUTPUT_PATH, --output OUTPUT_PATH
+                            full path of output file
