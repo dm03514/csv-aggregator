@@ -17,6 +17,9 @@ The [rules] section contains mappings of column names,  THese are applied to eac
 
 `python csv_aggregator.py <path/to/csv/input/files>`
 
+By default it searches for the config file in the same directory where the csv_aggregator script is located.  By default
+an output_{current_datetime_stamp}.csv file is created in that directory too.
+
 The above command will read from the columns.cfg file and create an output.csv file in the current directory!
 
 
@@ -33,3 +36,4 @@ The above command will read from the columns.cfg file and create an output.csv f
                             path to config file
       -o OUTPUT_PATH, --output OUTPUT_PATH
                             full path of output file
+
